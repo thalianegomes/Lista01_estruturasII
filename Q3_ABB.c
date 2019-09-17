@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#define tam 100000
 #define repeat 30
 
 typedef struct pala PALAVRA;
@@ -27,7 +26,20 @@ typedef struct {
 
 PALAVRA* criarArv(){
 	return NULL;
-	//linha branco
+}
+
+PALAVRA* criarFolha(char *palavraPT, char *palavraEnglish){
+	PALAVRA* novoNo = (PALAVRA*) malloc(sizeof(PALAVRA));
+	novoNo->esq = NULL;
+	novoNo->dir = NULL;
+	novoNo->english = (LISTA*) malloc(sizeof(LISTA));;
+	strcpy(novoNo->pt,palavraPT);
+	novoNo->english = inserirFinal(novoNo->english, palavraEnglish);
+	return novoNo;
+}
+
+LISTA *criarLista(){
+	return NULL;
 }
 
 LISTA* inserirFinal(LISTA *lista, char *palavraEnglish){
@@ -47,158 +59,21 @@ LISTA* inserirFinal(LISTA *lista, char *palavraEnglish){
 	}
 }
 
-PALAVRA* criarFolha(char *palavraPT, char *palavraEnglish){
-	PALAVRA* novoNo = (PALAVRA*) malloc(sizeof(PALAVRA));
-	novoNo->esq = NULL;
-	novoNo->dir = NULL;
-	novoNo->english = (LISTA*) malloc(sizeof(LISTA));;
-	strcpy(novoNo->pt,palavraPT);
-
-	novoNo->english = inserirFinal(novoNo->english, palavraEnglish);
-	return novoNo;
-}
-
-void imprimirLista(LISTA* lista){
-	
-	LISTA *aux;
-	for(aux=lista; aux != NULL; aux= aux->prox){
-		printf("%s ",aux->nome );
-	}
-}
-
 void exibirABB(PALAVRA* raiz){
 	if( raiz != NULL){
 		printf("<");
 		printf("%s ",raiz->pt );
-		
-		printf("(");
 		imprimirLista(raiz->english);
-		printf(")");
-
-		printf("[" );
 		exibirABB(raiz->esq);
-		printf("]" );
-		
-		printf("{" );
 		exibirABB(raiz->dir);
-		printf("}" );
-		
 		printf(">");
 	}
 }
 
-LISTA *criarLista(){
-	return NULL;
-	//k
-}
-
-void addPalavraENG(PALAVRA** raiz, char* palavraEnglish){
-	LISTA* aux;
-	int  flag = 0;
-	for(aux = (*raiz)->english; aux->prox !=NULL; aux = aux->prox){
-		if(strcmp(aux->nome, palavraEnglish) == 0){
-			flag = 1; 
-			break;
-		}
-	}
-
-	if(flag == 0){
-		(*raiz)->english = inserirFinal((*raiz)->english, palavraEnglish);
-	}
-}
-
-int buscarPTBR(PALAVRA** raiz, char *palavraBusca, char* palavraEnglish, int flag){
-	int find = 0;
-
-	if(*raiz != NULL){
-		int comp = strcmp(palavraBusca, (*raiz)->pt);
-		if(comp == 0){
-			
-			if(flag == 0){
-				//ADICIONA
-				addPalavraENG(raiz, palavraEnglish);
-			}else{
-				//BUSCAR EM UNIDADES
-				imprimirLista((*raiz)->english);
-			}
-			find = 1;
-		}else if(comp < 0)
-			find = buscarPTBR(&(*raiz)->esq, palavraBusca, palavraEnglish, flag);
-		else
-			find = buscarPTBR(&(*raiz)->dir, palavraBusca, palavraEnglish, flag);
-	}
-	return find;
-}
-
-void inserirABB(PALAVRA** raiz, PALAVRA* NO){	
-	if(*raiz==NULL){
-		*raiz = NO;
-	}else{
-		int comp = strcmp(NO->pt, (*raiz)->pt);
-		if( comp < 0)
-			inserirABB( &((*raiz)->esq), NO);
-		else
-			inserirABB( &((*raiz)->dir), NO);
-	}
-}
-
-PALAVRA** buscaRemover(PALAVRA** raiz, char *palavraBusca){
-	
-	PALAVRA** aux = NULL;
-
-	if(*raiz != NULL){
-		int comp = strcmp(palavraBusca, (*raiz)->pt);
-		if(comp == 0){
-			aux = raiz;		
-		}else if(comp < 0)
-			aux = buscaRemover(&(*raiz)->esq, palavraBusca);
-		else
-			aux = buscaRemover(&(*raiz)->dir, palavraBusca);
-	}
-	return aux;	
-}
-
-void removerABB(PALAVRA** raiz){
-
-	PALAVRA** aux;
-	PALAVRA* pai = NULL;
-	
-	//apenas filha esquerda
-
-	if((*raiz)->dir == NULL && (*raiz)->esq == NULL){
-		free(*raiz);
-		*raiz = NULL;
-	
-	}else if((*raiz)->dir == NULL && (*raiz)->esq != NULL){
-		*aux = (*raiz)->esq;
-		free(*raiz);
-		*raiz = *aux;
-	
-	}else if((*raiz)->dir != NULL && (*raiz)->esq == NULL){
-		*aux = (*raiz)->dir;
-		free(*raiz);
-		*raiz = *aux;
-	
-	}else if((*raiz)->dir != NULL && (*raiz)->esq != NULL){
-		pai = (*raiz);
-		*aux = (*raiz)->dir;
-
-		while((*aux)->esq!= NULL){
-			pai = *aux;
-			*aux = (*aux)->esq;
-		}
-		/*
-		aux->esq = (*raiz)->esq;
-		pai->esq = aux->dir;
-		aux->dir = (*raiz)->dir;
-		*/
-		//char pt[50];
-		//LISTA *english;
-		//PALAVRA *esq, *dir;
-		strcpy((*raiz)->pt,(*aux)->pt);
-		(*raiz)->english = (*aux)->english;
-		
-		removerABB(aux);
+void imprimirLista(LISTA* lista){
+	LISTA *aux;
+	for(aux=lista; aux != NULL; aux= aux->prox){
+		printf("%s ",aux->nome );
 	}
 }
 
@@ -235,11 +110,102 @@ char** processarString(char* string, char* palavraEnglish, int* contPala){
 	return palavraPTBR;	
 }
 
+void inserirABB(PALAVRA** raiz, PALAVRA* NO){	
+	if(*raiz==NULL){
+		*raiz = NO;
+	}else{
+		int comp = strcmp(NO->pt, (*raiz)->pt);
+		if( comp < 0)
+			inserirABB( &((*raiz)->esq), NO);
+		else
+			inserirABB( &((*raiz)->dir), NO);
+	}
+}
+
+void addPalavraENG(PALAVRA** raiz, char* palavraEnglish){
+	LISTA* aux;
+	int  flag = 0;
+	for(aux = (*raiz)->english; aux->prox !=NULL; aux = aux->prox){
+		if(strcmp(aux->nome, palavraEnglish) == 0){
+			flag = 1; 
+			break;
+		}
+	}
+	if(flag == 0)
+		(*raiz)->english = inserirFinal((*raiz)->english, palavraEnglish);
+}
+
+int buscarPTBR(PALAVRA** raiz, char *palavraBusca, char* palavraEnglish, int flag){
+	int find = 0;
+	if(*raiz != NULL){
+		int comp = strcmp(palavraBusca, (*raiz)->pt);
+		if(comp == 0){
+			if(flag == 0){
+				addPalavraENG(raiz, palavraEnglish);
+			}else{
+				imprimirLista((*raiz)->english);
+			}
+			find = 1;
+		}else if(comp < 0)
+			find = buscarPTBR(&(*raiz)->esq, palavraBusca, palavraEnglish, flag);
+		else
+			find = buscarPTBR(&(*raiz)->dir, palavraBusca, palavraEnglish, flag);
+	}
+	return find;
+}
+
+void removerABB(PALAVRA** raiz, char *palavraBusca){
+
+	if(* raiz != NULL){
+		int comp = strcmp(palavraBusca, (*raiz)->pt);
+		if(comp < 0)
+			removerABB(&(*raiz)->esq, palavraBusca);
+		else if( comp > 0){
+			removerABB(&(*raiz)->dir, palavraBusca);
+		}else{
+
+			PALAVRA* aux;
+			PALAVRA* pai = NULL;
+			
+			//Eh Folha
+			if((*raiz)->dir == NULL && (*raiz)->esq == NULL){
+				free(*raiz);
+				*raiz = NULL;
+			}else if( (*raiz)->esq == NULL ){
+				aux = (*raiz)->dir;
+				free(*raiz);
+				*raiz = aux;
+			
+			}else if((*raiz)->dir == NULL){
+				aux = (*raiz)->esq;
+				free(*raiz);
+				*raiz = aux;
+			
+			}else if((*raiz)->dir != NULL && (*raiz)->esq != NULL){
+				
+				aux = (*raiz)->dir;
+				while(aux->esq!= NULL){
+					pai = aux;
+					aux = aux->esq;
+				}
+				strcpy((*raiz)->pt,aux->pt);
+				(*raiz)->english = aux->english;
+				strcpy(aux->pt, palavraBusca);
+				removerABB(&(*raiz)->dir, palavraBusca);
+			}
+		}
+	}
+}
+
 int main(){
 
 	int qtdUnidades = 0, op=0, uni;
 	char NameArquivo[50];
 	
+	clock_t tempoBuscaI, tempoBuscaF;
+	clock_t tempoInserirI, tempoInserirF;
+	float tempoBuscaDecorrido, tempoInserirDecorrido;
+
 	UNIDADE* livro = NULL;
 	livro = (UNIDADE*) malloc(sizeof(UNIDADE));
 	
@@ -252,9 +218,12 @@ int main(){
 		printf("0 - SAIR\n");
 		scanf("%d", &op);
 	    switch(op){
+
 	    	case 1:
 	    		printf("Informe nome do arquivo (+ .txt): ");
 	    		scanf("%s", NameArquivo);
+
+	    		tempoInserirI = clock();
 	    		FILE *file;
 				if ( (file = fopen( NameArquivo, "r")) != NULL){
 
@@ -263,7 +232,13 @@ int main(){
 						if(linha[0] == '%'){
 							//NOVA UNIDADE
 							livro = (UNIDADE*) realloc( livro, (qtdUnidades+1) * sizeof(UNIDADE));
-							strcpy(livro[qtdUnidades].nome,linha);
+
+							char nameUnidade[50];
+							strcpy(nameUnidade,"");
+							for(int x = 1; linha[x]!='\0'; x++)
+								nameUnidade[x-1] = linha[x];
+							strcpy(livro[qtdUnidades].nome,nameUnidade);
+
 							(qtdUnidades)++;
 						}else{
 							int contPala = 0, pos = (qtdUnidades)-1;
@@ -285,24 +260,41 @@ int main(){
 				}else{
 					printf("ERRO AO ABRIR ARQUIVO %s.\n",NameArquivo );
 				}
-
-	    		
+				tempoInserirF = clock();
+				tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;
+				printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
 	    		break;
 	    	
 	    	case 2:
+	    		
 	    		printf("Insira a palavraPTBR: ");
 	    		char palavraBuscar2[50];
 	    		scanf("%s", palavraBuscar2);
-	    		PALAVRA** aux;
-	    		aux = buscaRemover(&livro[0].arv, palavraBuscar2);
-	    		removerABB(aux);
 
+	    		if(qtdUnidades == 0){
+	       			printf("Nenhuma unidade cadastrada.\n");
+	       		}else{
+		       		printf("LISTA DE UNIDADES:\n");
+		       		for(int x = 0; x<qtdUnidades; x++){
+		       			printf("[%d] - %s\n",x, livro[x].nome );
+		       		}
+		       		printf("Escolha uma Unidade: ");
+		       		scanf("%d", &uni);
+		       		if(uni >= 0 && uni<qtdUnidades){
+		       			removerABB(&livro[uni].arv, palavraBuscar2);
+		       		}else{
+		       			printf("Valor incorreto.\n");
+		       		}
+		       	}
+	   		
 	    		break;
+	      	
 	      	case 3:
 	      		printf("Insira a palavraPTBR: ");
 	    		char palavraBuscar[50];
 	    		scanf("%s", palavraBuscar);
 	    		
+				tempoBuscaI = clock();
 	    		for(int x = 0; x<qtdUnidades; x++){
 	    			printf("Unidade [%s]: ",livro[x].nome );
 		       		if(buscarPTBR(&(livro[x].arv), palavraBuscar, "None",1) == 0){
@@ -310,7 +302,12 @@ int main(){
 		       		}
 		       		printf("\n");
 		       	}
+				tempoBuscaF = clock();
+				tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+				printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+
 	    		break;
+	       	
 	       	case 4:
 	       		if(qtdUnidades == 0){
 	       			printf("Nenhuma unidade cadastrada.\n");
@@ -328,10 +325,12 @@ int main(){
 		       		}
 		       	}
 	    		break;
+	    	
 	    	case 0:
 	    		exit(0);
 	    		break;
-	    	default:
+	    default:
+	    		printf("Opção Inexistente.\n");
 	    		break;
 	    }
 	}
