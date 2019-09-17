@@ -5,7 +5,6 @@
 #define repeat 30
 
 typedef struct pala PALAVRA;
-
 typedef struct lista LISTA;
 
 struct lista{
@@ -23,6 +22,162 @@ typedef struct {
 	char nome[25];
 	PALAVRA *arv;
 }UNIDADE;
+
+
+PALAVRA* criarArv();
+PALAVRA* criarFolha(char *palavraPT, char *palavraEnglish);
+LISTA* inserirFinal(LISTA *lista, char *palavraEnglish);
+void exibirABB(PALAVRA* raiz);
+void imprimirLista(LISTA* lista);
+char** processarString(char* string, char* palavraEnglish, int* contPala);
+void inserirABB(PALAVRA** raiz, PALAVRA* NO);
+void addPalavraENG(PALAVRA** raiz, char* palavraEnglish);
+int buscarPTBR(PALAVRA** raiz, char *palavraBusca, char* palavraEnglish, int flag);
+void removerABB(PALAVRA** raiz, char *palavraBusca);
+
+
+
+int main(){
+
+	int qtdUnidades = 0, op=0, uni;
+	char NameArquivo[50];
+	
+	clock_t tempoBuscaI, tempoBuscaF;
+	clock_t tempoInserirI, tempoInserirF;
+	float tempoBuscaDecorrido, tempoInserirDecorrido;
+
+	UNIDADE* livro = NULL;
+	livro = (UNIDADE*) malloc(sizeof(UNIDADE));
+	
+	while(1 == 1){
+		printf("\n------------------------------\n");
+		printf("1 - Importar Dados\n");			//Criar Unidades
+		printf("2 - Remover Palavra\n");		//Uma Unidade
+		printf("3 - Buscar Palavra PTBR\n"); 	//TODAS AS UNIDADES
+		printf("4 - Exibir Unidade\n");			// PT -> Eng
+		printf("0 - SAIR\n");
+		scanf("%d", &op);
+	    switch(op){
+
+	    	case 1:
+	    		printf("Informe nome do arquivo (+ .txt): ");
+	    		scanf("%s", NameArquivo);
+
+	    		tempoInserirI = clock();
+	    		FILE *file;
+				if ( (file = fopen( NameArquivo, "r")) != NULL){
+
+					char linha[10000];
+					while ( fscanf(file, "%s\n",linha) != EOF ) {						
+						if(linha[0] == '%'){
+							//NOVA UNIDADE
+							livro = (UNIDADE*) realloc( livro, (qtdUnidades+1) * sizeof(UNIDADE));
+
+					
+
+							char nameUnidade[50];
+							strcpy(nameUnidade,"");
+							for(int x = 1; linha[x]!='\0'; x++)
+								nameUnidade[x-1] = linha[x];
+							strcpy(livro[qtdUnidades].nome,nameUnidade);
+
+							(qtdUnidades)++;
+						}else{
+							int contPala = 0, pos = (qtdUnidades)-1;
+							char palavraEnglish[50];
+							char** palavraPTBR  = processarString(linha, palavraEnglish, &contPala);
+							
+						
+							for(int i =0; i<=contPala; i++){
+								if(buscarPTBR(&(livro[pos].arv), palavraPTBR[i], palavraEnglish,0) == 0){
+									//Palavra PTBR não existir
+									inserirABB(&(livro[pos].arv),criarFolha(palavraPTBR[i], palavraEnglish));
+								}
+							}
+							
+						}
+					}
+					printf("\n%d Unidade(s) cadastrada(s).\n",qtdUnidades);
+					fclose(file);
+				}else{
+					printf("ERRO AO ABRIR ARQUIVO %s.\n",NameArquivo );
+				}
+				tempoInserirF = clock();
+				tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;
+				printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
+	    		break;
+	    	
+	    	case 2:
+	    		
+	    		printf("Insira a palavraPTBR: ");
+	    		char palavraBuscar2[50];
+	    		scanf("%s", palavraBuscar2);
+
+	    		if(qtdUnidades == 0){
+	       			printf("Nenhuma unidade cadastrada.\n");
+	       		}else{
+		       		printf("LISTA DE UNIDADES:\n");
+		       		for(int x = 0; x<qtdUnidades; x++){
+		       			printf("[%d] - %s\n",x, livro[x].nome );
+		       		}
+		       		printf("Escolha uma Unidade: ");
+		       		scanf("%d", &uni);
+		       		if(uni >= 0 && uni<qtdUnidades){
+		       			removerABB(&livro[uni].arv, palavraBuscar2);
+		       		}else{
+		       			printf("Valor incorreto.\n");
+		       		}
+		       	}
+	   		
+	    		break;
+	      	
+	      	case 3:
+	      		printf("Insira a palavraPTBR: ");
+	    		char palavraBuscar[50];
+	    		scanf("%s", palavraBuscar);
+	    		
+				tempoBuscaI = clock();
+	    		for(int x = 0; x<qtdUnidades; x++){
+	    			printf("Unidade [%s]: ",livro[x].nome );
+		       		if(buscarPTBR(&(livro[x].arv), palavraBuscar, "None",1) == 0){
+		       			printf("PALAVRA NÃO ENCONTRADA.");
+		       		}
+		       		printf("\n");
+		       	}
+				tempoBuscaF = clock();
+				tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+				printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+
+	    		break;
+	       	
+	       	case 4:
+	       		if(qtdUnidades == 0){
+	       			printf("Nenhuma unidade cadastrada.\n");
+	       		}else{
+		       		printf("LISTA DE UNIDADES:\n");
+		       		for(int x = 0; x<qtdUnidades; x++){
+		       			printf("[%d] - %s\n",x, livro[x].nome );
+		       		}
+		       		printf("Escolha uma Unidade: ");
+		       		scanf("%d", &uni);
+		       		if(uni >= 0 && uni<qtdUnidades){
+		       			exibirABB(livro[uni].arv);
+		       		}else{
+		       			printf("Valor incorreto.\n");
+		       		}
+		       	}
+	    		break;
+	    	
+	    	case 0:
+	    		exit(0);
+	    		break;
+	    default:
+	    		printf("Opção Inexistente.\n");
+	    		break;
+	    }
+	}
+	return 0;
+}
 
 PALAVRA* criarArv(){
 	return NULL;
@@ -197,143 +352,4 @@ void removerABB(PALAVRA** raiz, char *palavraBusca){
 	}
 }
 
-int main(){
-
-	int qtdUnidades = 0, op=0, uni;
-	char NameArquivo[50];
-	
-	clock_t tempoBuscaI, tempoBuscaF;
-	clock_t tempoInserirI, tempoInserirF;
-	float tempoBuscaDecorrido, tempoInserirDecorrido;
-
-	UNIDADE* livro = NULL;
-	livro = (UNIDADE*) malloc(sizeof(UNIDADE));
-	
-	while(1 == 1){
-		printf("\n------------------------------\n");
-		printf("1 - Importar Dados\n");			//Criar Unidades
-		printf("2 - Remover Palavra\n");		//Uma Unidade
-		printf("3 - Buscar Palavra PTBR\n"); 	//TODAS AS UNIDADES
-		printf("4 - Exibir Unidade\n");			// PT -> Eng
-		printf("0 - SAIR\n");
-		scanf("%d", &op);
-	    switch(op){
-
-	    	case 1:
-	    		printf("Informe nome do arquivo (+ .txt): ");
-	    		scanf("%s", NameArquivo);
-
-	    		tempoInserirI = clock();
-	    		FILE *file;
-				if ( (file = fopen( NameArquivo, "r")) != NULL){
-
-					char linha[10000];
-					while ( fscanf(file, "%s\n",linha) != EOF ) {						
-						if(linha[0] == '%'){
-							//NOVA UNIDADE
-							livro = (UNIDADE*) realloc( livro, (qtdUnidades+1) * sizeof(UNIDADE));
-
-							char nameUnidade[50];
-							strcpy(nameUnidade,"");
-							for(int x = 1; linha[x]!='\0'; x++)
-								nameUnidade[x-1] = linha[x];
-							strcpy(livro[qtdUnidades].nome,nameUnidade);
-
-							(qtdUnidades)++;
-						}else{
-							int contPala = 0, pos = (qtdUnidades)-1;
-							char palavraEnglish[50];
-							char** palavraPTBR  = processarString(linha, palavraEnglish, &contPala);
-							
-						
-							for(int i =0; i<=contPala; i++){
-								if(buscarPTBR(&(livro[pos].arv), palavraPTBR[i], palavraEnglish,0) == 0){
-									//Palavra PTBR não existir
-									inserirABB(&(livro[pos].arv),criarFolha(palavraPTBR[i], palavraEnglish));
-								}
-							}
-							
-						}
-					}
-					printf("\n%d Unidade(s) cadastrada(s).\n",qtdUnidades);
-					fclose(file);
-				}else{
-					printf("ERRO AO ABRIR ARQUIVO %s.\n",NameArquivo );
-				}
-				tempoInserirF = clock();
-				tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;
-				printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
-	    		break;
-	    	
-	    	case 2:
-	    		
-	    		printf("Insira a palavraPTBR: ");
-	    		char palavraBuscar2[50];
-	    		scanf("%s", palavraBuscar2);
-
-	    		if(qtdUnidades == 0){
-	       			printf("Nenhuma unidade cadastrada.\n");
-	       		}else{
-		       		printf("LISTA DE UNIDADES:\n");
-		       		for(int x = 0; x<qtdUnidades; x++){
-		       			printf("[%d] - %s\n",x, livro[x].nome );
-		       		}
-		       		printf("Escolha uma Unidade: ");
-		       		scanf("%d", &uni);
-		       		if(uni >= 0 && uni<qtdUnidades){
-		       			removerABB(&livro[uni].arv, palavraBuscar2);
-		       		}else{
-		       			printf("Valor incorreto.\n");
-		       		}
-		       	}
-	   		
-	    		break;
-	      	
-	      	case 3:
-	      		printf("Insira a palavraPTBR: ");
-	    		char palavraBuscar[50];
-	    		scanf("%s", palavraBuscar);
-	    		
-				tempoBuscaI = clock();
-	    		for(int x = 0; x<qtdUnidades; x++){
-	    			printf("Unidade [%s]: ",livro[x].nome );
-		       		if(buscarPTBR(&(livro[x].arv), palavraBuscar, "None",1) == 0){
-		       			printf("PALAVRA NÃO ENCONTRADA.");
-		       		}
-		       		printf("\n");
-		       	}
-				tempoBuscaF = clock();
-				tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
-				printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
-
-	    		break;
-	       	
-	       	case 4:
-	       		if(qtdUnidades == 0){
-	       			printf("Nenhuma unidade cadastrada.\n");
-	       		}else{
-		       		printf("LISTA DE UNIDADES:\n");
-		       		for(int x = 0; x<qtdUnidades; x++){
-		       			printf("[%d] - %s\n",x, livro[x].nome );
-		       		}
-		       		printf("Escolha uma Unidade: ");
-		       		scanf("%d", &uni);
-		       		if(uni >= 0 && uni<qtdUnidades){
-		       			exibirABB(livro[uni].arv);
-		       		}else{
-		       			printf("Valor incorreto.\n");
-		       		}
-		       	}
-	    		break;
-	    	
-	    	case 0:
-	    		exit(0);
-	    		break;
-	    default:
-	    		printf("Opção Inexistente.\n");
-	    		break;
-	    }
-	}
-	return 0;
-}
 
