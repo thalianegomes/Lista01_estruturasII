@@ -77,19 +77,35 @@ void exibirAVL(NO* raiz){
 	}
 }
 
-int alocar(NO** raiz, NO** pai, int qtdBlocos){
+int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 
 	//Resul 1 para alocação concluida
 	int resul = 0;
+
 	if( *raiz != NULL){
-		resul = alocar(&(*raiz)->esq,raiz, qtdBlocos);
+		resul = alocar(&(*raiz)->esq,raiz, qtdBlocos, status);
+
 		if(resul == 0){
 			
 			if((*raiz)->status == 'L'){
 				int qtdLocal = (*raiz)->endFim - (*raiz)->endInicio +1;
 				
-				//For folha
-				if((*raiz)->dir == NULL){
+				if( pai == NULL && (*raiz)->esq == NULL && (*raiz)->dir == NULL){
+					
+					if(qtdLocal == qtdBlocos){
+						(*raiz)->status = 'O';
+					}else{
+						int newFim = (*raiz)->endFim - qtdBlocos;
+						int auxFim = (*raiz)->endFim;
+						(*raiz)->endFim = newFim;
+
+						int newInicio = newFim+1;
+
+						inserirAVL(raiz, criarFolha(status, (*raiz)->nInicio,(*raiz)->nFinal,newInicio,auxFim));
+
+					}
+					resul = 1;
+				}else if((*raiz)->dir == NULL){
 					if(qtdLocal == qtdBlocos){
 						//Buscar os mais internos para unir;
 						int newFim = (*pai)->endFim + qtdBlocos;
@@ -160,11 +176,11 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos){
 						resul = 1;
 					
 					}else{
-						resul = alocar(&(*raiz)->dir,raiz, qtdBlocos);
+						resul = alocar(&(*raiz)->dir,raiz, qtdBlocos, status);
 					}	
 				}
 			}else{
-				resul = alocar(&(*raiz)->dir,raiz, qtdBlocos);
+				resul = alocar(&(*raiz)->dir,raiz, qtdBlocos, status);
 			}
 		}
 	}
@@ -172,19 +188,35 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos){
 }
 
 
-int liberar(NO** raiz, NO** pai, int qtdBlocos){
+int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 
 	//Resul 1 para alocação concluida
 	int resul = 0;
+
 	if( *raiz != NULL){
-		resul = liberar(&(*raiz)->esq,raiz, qtdBlocos);
+		resul = liberar(&(*raiz)->esq,raiz, qtdBlocos, status);
+	
 		if(resul == 0){
-			
+				
 			if((*raiz)->status == 'O'){
 				int qtdLocal = (*raiz)->endFim - (*raiz)->endInicio +1;
 				
-				//For folha
-				if((*raiz)->dir == NULL){
+				if( pai == NULL && (*raiz)->esq == NULL && (*raiz)->dir == NULL){
+					
+					if(qtdLocal == qtdBlocos){
+						(*raiz)->status = 'L';
+					}else{
+						int newFim = (*raiz)->endFim - qtdBlocos;
+						int auxFim = (*raiz)->endFim;
+						(*raiz)->endFim = newFim;
+
+						int newInicio = newFim+1;
+
+						inserirAVL(raiz, criarFolha(status, (*raiz)->nInicio,(*raiz)->nFinal,newInicio,auxFim));
+
+					}
+					resul = 1;
+				}else if((*raiz)->dir == NULL){
 					if(qtdLocal == qtdBlocos){
 						//Buscar os mais internos para unir;
 						int newFim = (*pai)->endFim + qtdBlocos;
@@ -255,11 +287,11 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos){
 						resul = 1;
 					
 					}else{
-						resul = liberar(&(*raiz)->dir,raiz, qtdBlocos);
+						resul = liberar(&(*raiz)->dir,raiz, qtdBlocos, status);
 					}	
 				}
 			}else{
-				resul = liberar(&(*raiz)->dir,raiz, qtdBlocos);
+				resul = liberar(&(*raiz)->dir,raiz, qtdBlocos, status);
 			}
 		}
 	}
@@ -272,7 +304,7 @@ int main(){
 	NO* groot = criarArv();
 	int  status=0;	//1-Ocupado 0-Livre
 	inserirAVL(&groot, criarFolha(&status, 1,200,1,10));
-	inserirAVL(&groot, criarFolha(&status, 1,200,11,20));
+	inserirAVL(&groot, criarFolha(&status, 1,200,10,20));
 	inserirAVL(&groot, criarFolha(&status, 1,200,21,35));
 	inserirAVL(&groot, criarFolha(&status, 1,200,36,50));
 	inserirAVL(&groot, criarFolha(&status, 1,200,51,70));
@@ -284,24 +316,22 @@ int main(){
 	exibirAVL(groot);
 	printf("------------\n");
 	
-	if( alocar(&groot,NULL, 5) == 0)
+	
+	if( alocar(&groot,NULL, 5, &status) == 0)
 		printf("Espaço insuficiente.\n");
 	else
 		printf("Alocação bem sucedida.\n");
 	
 	exibirAVL(groot);
 	printf("------------\n");
-
-	if( liberar(&groot,NULL, 60) == 0)
+	
+	if( liberar(&groot,NULL, 15, &status) == 0)
 		printf("Espaço insuficiente.\n");
 	else
 		printf("Liberação bem sucedida.\n");
 	
 	exibirAVL(groot);
 	printf("------------\n");
-
-
-
 		
     return 0;
 }
