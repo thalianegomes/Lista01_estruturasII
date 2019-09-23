@@ -90,7 +90,7 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 			if((*raiz)->status == 'L'){
 				int qtdLocal = (*raiz)->endFim - (*raiz)->endInicio +1;
 				
-				if( pai == NULL && (*raiz)->esq == NULL && (*raiz)->dir == NULL){
+				if( pai == NULL && (*raiz)->esq == NULL && (*raiz)->dir == NULL){		//apenas um nó
 					
 					if(qtdLocal == qtdBlocos){
 						(*raiz)->status = 'O';
