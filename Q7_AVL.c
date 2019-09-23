@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct no NO;
 
@@ -187,7 +188,6 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 	return resul;
 }
 
-
 int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 
 	//Resul 1 para alocação concluida
@@ -298,8 +298,49 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 	return resul;
 }
 
+int buscarAVL_Alocar(NO* raiz, int Valor){
+	int find = 0;
+
+	if(raiz != NULL){
+		find = buscarAVL_Alocar(raiz->esq, Valor);
+		if((raiz)->status == 'L'){
+			int qtdLocal = (raiz)->endFim - (raiz)->endInicio +1;
+			if(Valor <= qtdLocal){
+				find = 1;
+			}
+		}
+		if(find==0){
+			find = buscarAVL_Alocar(raiz->dir, Valor);
+		}
+	}
+	return find;
+}
+
+int buscarAVL_Liberar(NO* raiz, int Valor){
+	int find = 0;
+
+	if(raiz != NULL){
+		find = buscarAVL_Liberar(raiz->esq, Valor);
+		if((raiz)->status == 'L'){
+			int qtdLocal = (raiz)->endFim - (raiz)->endInicio +1;
+			if(Valor <= qtdLocal){
+				find = 1;
+			}
+		}
+		if(find==0){
+			find = buscarAVL_Liberar(raiz->dir, Valor);
+		}
+	}
+	return find;
+}
 
 int main(){
+
+
+	clock_t tempoBuscaI, tempoBuscaF;
+	clock_t tempoAlterarI, tempoAlterarF;
+	float tempoBuscaDecorrido, tempoAlterarDecorrido;
+
 
 	NO* groot = criarArv();
 	int  status=0;	//1-Ocupado 0-Livre
@@ -316,20 +357,51 @@ int main(){
 	exibirAVL(groot);
 	printf("------------\n");
 	
+
+	tempoBuscaI = clock();
 	
+	int findAloc = buscarAVL_Alocar(groot, 5);
+	
+	tempoBuscaF = clock();
+	tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+	printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+
+	
+	tempoAlterarI = clock();
 	if( alocar(&groot,NULL, 5, &status) == 0)
-		printf("Espaço insuficiente.\n");
+		printf("Espaço insuficiente [%d].\n", findAloc);
 	else
-		printf("Alocação bem sucedida.\n");
+		printf("Alocação bem sucedida [%d].\n", findAloc);
 	
+	tempoAlterarF = clock();
+	tempoAlterarDecorrido = (tempoAlterarF-tempoAlterarI)/(CLOCKS_PER_SEC/1000);
+	printf("Tempo gasto ALTERAR: %lf \n", tempoBuscaDecorrido);
+
+
 	exibirAVL(groot);
-	printf("------------\n");
+	printf("------------------------------\n");
+
+	tempoBuscaI = clock();
 	
+	int findLib = buscarAVL_Liberar(groot, 5);
+
+	tempoBuscaF = clock();
+	tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+	printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+	
+
+
+	tempoAlterarI = clock();
 	if( liberar(&groot,NULL, 15, &status) == 0)
-		printf("Espaço insuficiente.\n");
+		printf("Espaço insuficiente [%d].\n", findLib);
 	else
-		printf("Liberação bem sucedida.\n");
+		printf("Liberação bem sucedida [%d].\n", findLib);
 	
+	tempoAlterarF = clock();
+	tempoAlterarDecorrido = (tempoAlterarF-tempoAlterarI)/(CLOCKS_PER_SEC/1000);
+	printf("Tempo gasto ALTERAR: %lf \n", tempoBuscaDecorrido);
+
+
 	exibirAVL(groot);
 	printf("------------\n");
 		
