@@ -106,7 +106,7 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 
 					}
 					resul = 1;
-				}else if((*raiz)->dir == NULL){
+				}else if((*raiz)->esq == NULL && (*raiz)->dir == NULL){
 					if(qtdLocal == qtdBlocos){
 						//Buscar os mais internos para unir;
 						int newFim = (*pai)->endFim + qtdBlocos;
@@ -155,6 +155,7 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 							maisDir = paiMaisDir;
 						}
 						//free(*paiMaisDir);
+						
 						
 						//Buscar os mais internos para unir;
 						int newInicio = (*maisDir)->endInicio;
@@ -334,7 +335,8 @@ int buscarAVL_Liberar(NO* raiz, int Valor){
 	return find;
 }
 
-int main(){
+/*
+int mainBruto(){
 
 
 	clock_t tempoBuscaI, tempoBuscaF;
@@ -405,5 +407,112 @@ int main(){
 	exibirAVL(groot);
 	printf("------------\n");
 		
+    return 0;
+}
+*/
+
+int main(){
+
+	NO* groot = criarArv();
+	int  status=0, op;	//1-Ocupado 0-Livre
+
+	clock_t tempoBuscaI, tempoBuscaF;
+	clock_t tempoAlterarI, tempoAlterarF;
+	float tempoBuscaDecorrido, tempoAlterarDecorrido;
+
+	while(1==1){
+		printf("--------------------------------\n");
+		printf("1 - Definir Arvore\n");
+		printf("2 - Mostrar Arvore\n");
+		printf("3 - Alocar\n");
+		printf("4 - Liberar\n");
+		printf("0 - SAIR\n");
+		printf("---------------------------------\n");
+		scanf("%d", &op);
+		switch(op){
+			case 1:
+
+				free(groot);
+				groot = NULL;
+
+				printf("Insira o status do primeiro bloco 1-Ocupado 0-Livre\n");
+				scanf("%d", &status);
+
+				int Inicio, Fim;
+				printf("Insira o endereço incial: ");
+				scanf("%d", &Inicio);
+				printf("Insira o endereço final: ");
+				scanf("%d", &Fim);
+
+				int auxInicio=0, auxFim=0, cont=0;
+
+				while(auxFim < Fim){
+					printf("Insira o endereço[%d] incial: ",cont);
+					scanf("%d", &auxInicio);
+					printf("Insira o endereço[%d] final: ", cont++);
+					scanf("%d", &auxFim);
+					inserirAVL(&groot, criarFolha(&status, Inicio,Fim,auxInicio,auxFim));
+				}
+				break;
+			case 2:
+				exibirAVL(groot);
+				printf("------------\n");
+				break;
+			case 3:
+				
+				printf("Quantidade de blocos para Alocar: ");
+				int auxalocar;
+				scanf("%d", &auxalocar);
+
+
+				tempoBuscaI = clock();
+				int findAloc = buscarAVL_Alocar(groot, auxalocar);
+				tempoBuscaF = clock();
+				tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+				printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+
+				
+				tempoAlterarI = clock();
+				if( alocar(&groot,NULL, auxalocar, &status) == 0)
+					printf("Espaço insuficiente [%d].\n", findAloc);
+				else
+					printf("Alocação bem sucedida [%d].\n", findAloc);
+				
+				tempoAlterarF = clock();
+				tempoAlterarDecorrido = (tempoAlterarF-tempoAlterarI)/(CLOCKS_PER_SEC/1000);
+				printf("Tempo gasto ALTERAR: %lf \n", tempoBuscaDecorrido);
+
+				break;
+			case 4:
+
+				printf("Quantidade de blocos para liberar: ");
+				int auxliberar;
+				scanf("%d", &auxliberar);
+
+				tempoBuscaI = clock();
+				
+				int findLib = buscarAVL_Liberar(groot, auxliberar);
+
+				tempoBuscaF = clock();
+				tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+				printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+				
+
+				tempoAlterarI = clock();
+				if( liberar(&groot,NULL, auxliberar, &status) == 0)
+					printf("Espaço insuficiente [%d].\n", findLib);
+				else
+					printf("Liberação bem sucedida [%d].\n", findLib);
+				
+				tempoAlterarF = clock();
+				tempoAlterarDecorrido = (tempoAlterarF-tempoAlterarI)/(CLOCKS_PER_SEC/1000);
+				printf("Tempo gasto ALTERAR: %lf \n", tempoBuscaDecorrido);
+				break;
+			case 0:
+				exit(0);
+			default:
+				break;
+		}
+	}
     return 0;
 }
