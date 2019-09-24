@@ -17,8 +17,11 @@ NO *criarArv(){
 
 int corNO(NO *no){
     int c = 0;
-    if(no == NULL)
+    if(no==NULL){
         c = 1;
+    }else{
+        c = no->cor;
+    }
     return c;
 }
 
@@ -76,10 +79,14 @@ NO *criarNo(NO *raiz,int valor){
     else
         raiz->esq = criarNo(raiz->esq, valor);
 
-    if (corNO(raiz->esq) == 1 && corNO(raiz->dir) == 0)
+    if (corNO(raiz->dir) == 0)
         raiz = rotacionaEsquerda(raiz);
 
-    if (corNO(raiz->esq) == 0 && corNO(raiz->esq->esq) == 0)
+    /*if (corNO(raiz->esq) == 0 && corNO(raiz->esq->esq) == 0)
+        raiz = rotacionaDireita(raiz);
+    */
+
+    if(raiz->esq != NULL && corNO(raiz->esq) == 0 && corNO(raiz->esq->esq)==0)
         raiz = rotacionaDireita(raiz);
 
     if (corNO(raiz->esq) == 0 && corNO(raiz->dir) == 0)
@@ -124,8 +131,8 @@ int main(){
     inserir(&arv,8);
     inserir(&arv,25);
     inserir(&arv,6);
-    //inserir(&arv,26);
-    inserir(&arv,7);
+    inserir(&arv,26);
+    //inserir(&arv,7);
     exibir(arv);
     printf("\n------\n");
     free(arv);
