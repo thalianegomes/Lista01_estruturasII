@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define tam 100000
+#define tam 10000
 #define repeat 30
 
 typedef struct arv Arv;

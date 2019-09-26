@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define tam 30000
-#define repeat 5
+#define tam 10000
+#define repeat 30
 
 typedef struct arv Arv;
 
@@ -207,9 +207,21 @@ int main(){
 		//Contar tempo de inserção
 		tempoInserirI = clock();
 		//Inserindo numeros aleatorios na arvore
+		Arv* folha = NULL;
 		for(int x = 0; x<tam; x++){
-			inserirAVL(&groot, criarFolha(numbers[x]));
+			folha = criarFolha(numbers[x]);
+			inserirAVL(&groot, folha);
 		}
+		/*inserirAVL(&groot,criarFolha(100));
+		inserirAVL(&groot,criarFolha(200));
+		inserirAVL(&groot,criarFolha(300));
+		inserirAVL(&groot,criarFolha(250));
+		inserirAVL(&groot,criarFolha(275));
+		inserirAVL(&groot,criarFolha(220));
+		inserirAVL(&groot,criarFolha(75));
+		inserirAVL(&groot,criarFolha(25));
+		inserirAVL(&groot,criarFolha(80));
+		exibirAVL(groot);*/
 		tempoInserirF = clock();
 
 		tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;

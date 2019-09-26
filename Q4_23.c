@@ -38,7 +38,7 @@ arv *criaNoL(char *port,ing *ingl,arv *esq,arv *cen,arv *dir);
 arv *quebraNo(arv **raiz,char *info,ing *ingl,char *promovePal,ing **promoveL,arv *sub);
 arv *adcNO(arv *no,char *info,ing *lis,arv *filho);
 int efolha(arv *no);
-arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing *promoveL,arv *pai);
+arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *pai);
 void mostraInOrdem(arv *raiz);
 void Mostrar(cap *uni);
 void lerArquivo(char *caminho, cap **uni);
@@ -59,6 +59,7 @@ int main(){
     int choice, certo;
     char procura[100], arq[100], unidade[100];
     clock_t inicio, fim;
+    long double tempo;
     do{
         choice = menu();
         switch(choice){
@@ -71,7 +72,7 @@ int main(){
             inicio = (long double)clock();
             lerArquivo(arq, &uni);
             fim = (long double)clock();
-            long double tempo = ((fim - inicio)/((long double)CLOCKS_PER_SEC/1000.0));
+            tempo = ((fim - inicio)/((long double)CLOCKS_PER_SEC/1000.0));
             printf("Tempo de insercao %Lf\n", tempo);
             break;
         case 2:
@@ -114,7 +115,11 @@ int main(){
                 setbuf(stdin, NULL);
                 scanf("%s", procura);
                 inicio = (long double)clock();
-                procuraPalavra((*aux)->arvore, procura);
+                if(procuraPalavra((*aux)->arvore, procura) == 1){
+                    printf("Palavra Encontrada!\n");
+                }else{
+                    printf("Palavra nao encontrada!\n");
+                }
                 fim = (long double)clock();
                 tempo = ((fim - inicio)/((long double)CLOCKS_PER_SEC/1000.0));
                 printf("Tempo de busca da palavra %Lf\n", tempo);
@@ -190,7 +195,7 @@ arv *criaNoL(char *port,ing *ingl,arv *esq,arv *cen,arv *dir){
     no->info1=(char*)malloc(sizeof(char)*100);
     no->info2=(char*)malloc(sizeof(char)*100);
     strcpy(no->info1,port);
-    no->l1=ingl;
+    copiaLista(&no->l1,ingl);
     no->l2=NULL;
     no->qtd=1;
     no->esq=esq;
@@ -203,29 +208,34 @@ arv *quebraNo(arv **raiz,char *info,ing *ingl,char *promovePal,ing **promoveL,ar
     arv *aux;
     if(strcmp(info,(*raiz)->info1)<0){
         strcpy(promovePal,(*raiz)->info1);
-        *promoveL=(*raiz)->l1;
-        (*raiz)->l1=ingl;
+        apagarLista(promoveL);
+        copiaLista(promoveL,(*raiz)->l1);
         strcpy((*raiz)->info1,info);
+        apagarLista(&(*raiz)->l1);
+        copiaLista(&(*raiz)->l1,ingl);
         (*raiz)->qtd-=1;
         aux=criaNoL((*raiz)->info2,(*raiz)->l2,(*raiz)->cen,(*raiz)->dir,NULL);
         (*raiz)->l2=NULL;
-        (*raiz)->cen=sub;
         (*raiz)->dir=NULL;
+        (*raiz)->cen=sub;
     }else if(strcmp(info,(*raiz)->info2)<0){
         strcpy(promovePal,info);
-        *promoveL=ingl;
+        apagarLista(promoveL);
+        copiaLista(promoveL,ingl);
         (*raiz)->qtd-=1;
-        aux=criaNoL((*raiz)->info2,(*raiz)->l2,(*raiz)->cen,(*raiz)->dir,NULL);
+        aux=criaNoL((*raiz)->info2,(*raiz)->l2,sub,(*raiz)->dir,NULL);
+
         (*raiz)->l2=NULL;
-        (*raiz)->cen=sub;
         (*raiz)->dir=NULL;
     }else{
-       strcpy(promovePal,(*raiz)->info2);
-        *promoveL=(*raiz)->l2;
+        strcpy(promovePal,(*raiz)->info2);
+        apagarLista(promoveL);
+        *promoveL=NULL;
+        copiaLista(promoveL,(*raiz)->l2);
+        apagarLista(&(*raiz)->l2);
         (*raiz)->qtd-=1;
-        aux=criaNoL(info,ingl,(*raiz)->cen,(*raiz)->dir,NULL);
+        aux=criaNoL(info,ingl,(*raiz)->dir,sub,NULL);
         (*raiz)->l2=NULL;
-        (*raiz)->cen=sub;
         (*raiz)->dir=NULL;
     }
     return aux;
@@ -256,10 +266,10 @@ int efolha(arv *no){
     return r;
 }
 
-arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing *promoveL,arv *pai){
+arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *pai){
     arv *aux = NULL;
     ing *aux2=NULL;
-    if(promoveL==NULL){
+    if(*promoveL==NULL){
         insereLista(&aux2,ingl);
     }    
     if(*raiz == NULL){
@@ -274,7 +284,7 @@ arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing *promoveL,arv *pa
             *raiz=adcNO(*raiz,info,aux2,NULL);
             aux=NULL;
         }else{
-            aux=quebraNo(raiz,info,aux2,promove,&promoveL,NULL);
+            aux=quebraNo(raiz,info,aux2,promove,promoveL,NULL);
         }
     }else{
         if(strcmp(info,(*raiz)->info1)<0){
@@ -286,14 +296,18 @@ arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing *promoveL,arv *pa
         }
     }
     if(aux!=NULL){
+        char *copia=(char*)malloc(sizeof(char)*100);
+        strcpy(copia,promove);
+        ing *lista=NULL;
+        copiaLista(&lista,*promoveL);
         if(pai==NULL){
-            *raiz=criaNoL(promove,promoveL,*raiz,aux,NULL);
+            *raiz=criaNoL(promove,*promoveL,*raiz,aux,NULL);
             aux=NULL;
         }else if(pai->qtd==1){
-            pai=adcNO(pai,promove,promoveL,aux);
+            pai=adcNO(pai,promove,*promoveL,aux);
             aux=NULL;
         }else{
-            aux=quebraNo(&pai,promove,promoveL,promove,&promoveL,aux);
+            aux=quebraNo(&pai,copia,lista,promove,promoveL,aux);
         }
     }
     return aux;
@@ -374,13 +388,13 @@ void lerArquivo(char *caminho, cap **uni){
                 j++;
                 if(palavras[i] == ','){
                     nome[j-1] = '\0';
-                    insere(&(*uni)->arvore, nome, ingles, promove, proLista, NULL);
+                    insere(&(*uni)->arvore, nome, ingles, promove, &proLista, NULL);
                     proLista = NULL;
                     j = 0;
                 }
             }
             nome[j] = '\0';
-            insere(&(*uni)->arvore, nome, ingles, promove, proLista, NULL);
+            insere(&(*uni)->arvore, nome, ingles, promove, &proLista, NULL);
             proLista = NULL;
         }
         fscanf(fptr, "%s", palavras);
@@ -614,12 +628,10 @@ int remove23(arv **raiz, char *pal, arv **pai){
 
 cap* procuraUnidade(cap *uni, char *p, int *certo){
     cap *aux=uni;
-    for(uni; aux != NULL; aux=aux->prox){
-        if(strcmp(aux->unidade, p) == 0){
-            *certo = 1;
-            break;
-        }
+    for(uni;( aux != NULL && strcmp(aux->unidade, p) != 0); aux=aux->prox){
+
     }
+    *certo = (aux != NULL)?1:0;    
     return aux;
 }
 
