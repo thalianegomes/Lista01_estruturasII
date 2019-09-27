@@ -72,7 +72,7 @@ int main(){
             inicio = (long double)clock();
             lerArquivo(arq, &uni);
             fim = (long double)clock();
-            tempo = ((fim - inicio)/((long double)CLOCKS_PER_SEC/1000.0));
+            tempo = ((fim - inicio)*1000)/CLOCKS_PER_SEC;
             printf("Tempo de insercao %Lf\n", tempo);
             break;
         case 2:
@@ -108,8 +108,8 @@ int main(){
             inicio = (long double)clock();
             *aux = procuraUnidade(uni, unidade, &certo);
             fim = (long double)clock();
-            tempo = ((fim - inicio)/((long double)CLOCKS_PER_SEC/1000.0));
-            printf("Tempo de busca da unidade %Lf\n", tempo);
+            tempo = ((fim - inicio)*1000)/CLOCKS_PER_SEC;
+            printf("Tempo de BUSCA da UNIDADE %Lf\n", tempo);
             if(certo == 1){
                 printf("Digite o nome da palavra:\n");
                 setbuf(stdin, NULL);
@@ -121,8 +121,8 @@ int main(){
                     printf("Palavra nao encontrada!\n");
                 }
                 fim = (long double)clock();
-                tempo = ((fim - inicio)/((long double)CLOCKS_PER_SEC/1000.0));
-                printf("Tempo de busca da palavra %Lf\n", tempo);
+                tempo = ((fim - inicio) * 1000) / CLOCKS_PER_SEC;
+                printf("Tempo de BUSCA da PALAVRA %Lf\n", tempo);
              }
             break;
         default:
@@ -312,8 +312,6 @@ arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *p
     }
     return aux;
 }
-
-
 
 void mostraInOrdem(arv *raiz){
     if(raiz!=NULL){

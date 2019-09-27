@@ -99,7 +99,7 @@ int main(){
 					printf("\n-- %d Unidade(s) cadastrada(s) --\n",qtdUnidades);
 					fclose(file);
 					tempoInserirF = clock();
-					tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;
+					tempoInserirDecorrido = ((tempoInserirF - tempoInserirI) * 1000) / CLOCKS_PER_SEC;
 					printf("Tempo gasto para INSERIR: %lf \n", tempoInserirDecorrido);
 				}else{
 					printf("\n - ERRO AO ABRIR ARQUIVO  %s -\n",NameArquivo );
@@ -143,7 +143,7 @@ int main(){
 						printf("\n");
 					}
 					tempoBuscaF = clock();
-					tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+					tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI) * 1000) / CLOCKS_PER_SEC;
 					printf("Tempo gasto para BUSCAR: %lf \n", tempoBuscaDecorrido);
 				}else{
 					printf("\n -- Nenhuma unidade cadastrada --\n");

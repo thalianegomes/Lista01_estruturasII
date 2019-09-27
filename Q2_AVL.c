@@ -161,22 +161,6 @@ int folha_MenorP(Arv* raiz){
 	return depth;
 }
 
-/*int profundidade(NO* raiz, int info){
-	int prof = 0;
-	if( raiz == NULL)
-		prof = -1
-	else if(raiz->info == info)
-			prof = 0;
-	else{ 
-		if( raiz->info > info)
-			prof = profundidade(raiz->esq, info);
-		else
-			prof = profundidade(raiz->dir, info);
-		if(prof != -1)
-			prof+=1;
-	}
-	return prof;
-}*/
 
 int* gerarNumRandom(int qtd){
 	int* vetor = (int*) malloc(qtd*sizeof(int));
@@ -198,8 +182,6 @@ int main(){
 		clock_t tempoInserirI, tempoInserirF;
 		float tempoBuscaDecorrido, tempoInserirDecorrido;
 
-	
-
 		//Gerando numeros aleatorios
 		int *numbers = gerarNumRandom(tam);
 
@@ -212,19 +194,10 @@ int main(){
 			folha = criarFolha(numbers[x]);
 			inserirAVL(&groot, folha);
 		}
-		/*inserirAVL(&groot,criarFolha(100));
-		inserirAVL(&groot,criarFolha(200));
-		inserirAVL(&groot,criarFolha(300));
-		inserirAVL(&groot,criarFolha(250));
-		inserirAVL(&groot,criarFolha(275));
-		inserirAVL(&groot,criarFolha(220));
-		inserirAVL(&groot,criarFolha(75));
-		inserirAVL(&groot,criarFolha(25));
-		inserirAVL(&groot,criarFolha(80));
-		exibirAVL(groot);*/
+		
 		tempoInserirF = clock();
 
-		tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;
+		tempoInserirDecorrido = ((tempoInserirF- tempoInserirI)*1000)/CLOCKS_PER_SEC;
 		printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
 
 		int menorNivel = folha_MenorP(groot);
@@ -254,12 +227,12 @@ int main(){
 
 		//Contar tempo de BUSCA
 		tempoBuscaI = clock();
-		for(int x = 0; x<tam; x++){
-			int find = buscarAVL(groot,numbers[x]);
-			//printf("Buscando %d : %d\n", numbers[x],find);
-		}
+		//for(int x = 0; x<tam; x++)
+			int find = buscarAVL(groot,numbers[5]);
+			
+		
 		tempoBuscaF = clock();
-		tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
+		tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI)*1000)/CLOCKS_PER_SEC;
 		printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");

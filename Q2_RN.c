@@ -214,8 +214,8 @@ int main(){
 		}
 		tempoInserirF = clock();
 
-		tempoInserirDecorrido = (tempoInserirF- tempoInserirI) / (CLOCKS_PER_SEC/1000) ;
-		printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
+        tempoInserirDecorrido = ((tempoInserirF - tempoInserirI) * 1000) / CLOCKS_PER_SEC;
+        printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
 
         profundidade_menorRN(arv, auxArv, &menorNivel);
         profundidade_maiorRN(arv, auxArv, &maiorNivel);
@@ -227,13 +227,13 @@ int main(){
 
         //Contar tempo de BUSCA
 		tempoBuscaI = clock();
-		for(int x = 0; x<tam; x++){
-			int find = buscaRN(arv,numbers[x]);
+		//for(int x = 0; x<tam; x++)
+			int find = buscaRN(arv,numbers[5]);
 			//printf("Buscando %d : %d\n", numbers[x],find);
-		}
+		
 		tempoBuscaF = clock();
-		tempoBuscaDecorrido = (tempoBuscaF- tempoBuscaI) / (CLOCKS_PER_SEC/1000) ;
-		printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
+        tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI) * 1000) / CLOCKS_PER_SEC;
+        printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");
     }
