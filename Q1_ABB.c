@@ -133,7 +133,6 @@ int* gerarNumRandom(int qtd){
 
 int main(){
 	Arv* groot = criarArv();
-	
 	ContadorDiff* Values = (ContadorDiff*) malloc(sizeof(ContadorDiff));
 	int qtdDiff = 0;
 	clock_t tempoBuscaI, tempoBuscaF;
@@ -142,6 +141,7 @@ int main(){
 
 	
 	for(int i = 0; i<repeat; i++){
+		printf("-- repetição: %d --\n", i+1);
 
 		//Gerando numeros aleatorios
 		int *numbers = gerarNumRandom(tam);
@@ -160,6 +160,7 @@ int main(){
 
 		int menorNivel = folha_MenorP(groot);
 		int maiorNivel = folha_MaiorP(groot);
+		printf("Maior nível: %d | Menor nível: %d \n",maiorNivel,menorNivel);
 
 		//Mostrar nivel da folha de maior e menor profundidade	
 		/*
@@ -201,4 +202,5 @@ int main(){
 		printf("Numero Diff: %d | %d vez(es)\n", Values[y].num, Values[y].cont);
 	}
 	return 0;
+	
 }
