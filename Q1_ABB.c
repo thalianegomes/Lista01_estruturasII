@@ -172,7 +172,7 @@ int main(){
 		
 		tempoBuscaF = clock();
 		tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI)*1000)/CLOCKS_PER_SEC;
-		printf("Tempo gasto BUSCAR: %10.f \n", tempoBuscaDecorrido);
+		printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");
 	}
