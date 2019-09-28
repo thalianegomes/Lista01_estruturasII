@@ -13,6 +13,11 @@ struct no{
     NO *esq,*dir;
 };
 
+typedef struct{
+	int num;
+	int cont;
+}ContadorDiff;
+
 NO *criarArv(){
     return NULL;
 }
@@ -188,23 +193,22 @@ int* gerarNumRandom(int qtd){
 }
 
 int main(){
-    NO *arv =  criarArv();
-    NO *auxArv = criarArv();
-    int menorNivel = 0, maiorNivel = 0;
-    int difNivel;
-    int *vetorDiff = (int*)calloc(sizeof(int), tam);   //qtd de diferenças entre níveis
+   
+    ContadorDiff *Values = (ContadorDiff *)malloc(sizeof(ContadorDiff));
+    int qtdDiff = 0;
 
-    clock_t tempoBuscaI, tempoBuscaF;
-	clock_t tempoInserirI, tempoInserirF;
-	float tempoBuscaDecorrido, tempoInserirDecorrido;
+    for(int i = 0; i<repeat; i++){
+        NO *arv =  criarArv();
+        NO *auxArv = criarArv();
 
-	
-	for(int i = 0; i<repeat; i++){
+        int menorNivel = 0, maiorNivel = 0;
+        clock_t tempoBuscaI, tempoBuscaF;
+        clock_t tempoInserirI, tempoInserirF;
+        float tempoBuscaDecorrido, tempoInserirDecorrido;
 		printf("-- repetição: %d --\n", i+1);
 
 		//Gerando numeros aleatorios
 		int *numbers = gerarNumRandom(tam);
-
 
 		//Contar tempo de inserção
 		tempoInserirI = clock();
@@ -222,26 +226,39 @@ int main(){
         printf("-- Menor nível: %d | Maior Nível: %d \n", menorNivel,maiorNivel);
 
 
-        difNivel = maiorNivel - menorNivel;
-        vetorDiff[difNivel]++;
+        int diff = abs( maiorNivel - menorNivel);
+		
+		//Dicionario em Python
+		int y = 0;
+		for( ; y<qtdDiff; y++)	
+			if(Values[y].num == diff) break;
+
+		if(y == qtdDiff){
+			Values = (ContadorDiff*) realloc(Values, (qtdDiff+1)*sizeof(ContadorDiff));
+			Values[qtdDiff].num = diff;
+			Values[qtdDiff].cont = 1;
+
+			qtdDiff++;
+		}else{
+			Values[y].cont++;
+		}
 
         //Contar tempo de BUSCA
 		tempoBuscaI = clock();
-		//for(int x = 0; x<tam; x++)
-			int find = buscaRN(arv,numbers[5]);
-			//printf("Buscando %d : %d\n", numbers[x],find);
+		int find = buscaRN(arv,numbers[5]);
 		
 		tempoBuscaF = clock();
         tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI) * 1000) / CLOCKS_PER_SEC;
         printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");
+        
     }
 
-    for(int i=0; i<tam; i++){
-        if(vetorDiff[i] != 0 )
-            printf("Diff %d: %d vez(es)\n", i, vetorDiff[i]);
-    }
+    printf("\n");
+	for(int y = 0 ; y<qtdDiff; y++){
+		printf("Numero Diff: %d | %d vez(es)\n", Values[y].num, Values[y].cont);
+	}
 
     
 }
