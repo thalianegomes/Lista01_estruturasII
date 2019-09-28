@@ -171,16 +171,15 @@ int* gerarNumRandom(int qtd){
 
 int main(){
 	
-
 	ContadorDiff* Values = (ContadorDiff*) malloc(sizeof(ContadorDiff));
 	int qtdDiff = 0;
 	
+	clock_t tempoBuscaI, tempoBuscaF;
+	clock_t tempoInserirI, tempoInserirF;
+	float tempoBuscaDecorrido, tempoInserirDecorrido;
+	
 	for(int i = 0; i<repeat; i++){
 		Arv* groot = criarArv();
-		
-		clock_t tempoBuscaI, tempoBuscaF;
-		clock_t tempoInserirI, tempoInserirF;
-		float tempoBuscaDecorrido, tempoInserirDecorrido;
 
 		//Gerando numeros aleatorios
 		int *numbers = gerarNumRandom(tam);
@@ -194,6 +193,7 @@ int main(){
 			folha = criarFolha(numbers[x]);
 			inserirAVL(&groot, folha);
 		}
+
 		
 		tempoInserirF = clock();
 
@@ -239,8 +239,8 @@ int main(){
 	}
 	
 	printf("\n");
-	for(int y = 0 ; y<qtdDiff; y++){
+	for(int y = 0 ; y<qtdDiff; y++)
 		printf("Numero Diff: %d | %d vez(es)\n", Values[y].num, Values[y].cont);
-	}
+	
 	return 0;
 }

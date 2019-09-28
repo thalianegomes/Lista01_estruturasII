@@ -108,7 +108,6 @@ int folha_MenorP(Arv* raiz){
 }
 
 
-
 int* gerarNumRandom(int qtd){
 	int* vetor = (int*) malloc(qtd*sizeof(int));
 	for(int x = 0; x<qtd; x++)
@@ -117,7 +116,6 @@ int* gerarNumRandom(int qtd){
 }
 
 int main(){
-	Arv* groot = criarArv();
 	ContadorDiff* Values = (ContadorDiff*) malloc(sizeof(ContadorDiff));
 	int qtdDiff = 0;
 	clock_t tempoBuscaI, tempoBuscaF;
@@ -127,6 +125,7 @@ int main(){
 	
 	for(int i = 0; i<repeat; i++){
 		printf("-- repetição: %d --\n", i+1);
+		Arv* groot = criarArv();
 
 		//Gerando numeros aleatorios
 		int *numbers = gerarNumRandom(tam);
