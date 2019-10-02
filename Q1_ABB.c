@@ -121,7 +121,7 @@ int main(){
 	clock_t tempoBuscaI, tempoBuscaF;
 	clock_t tempoInserirI, tempoInserirF;
 	float tempoBuscaDecorrido, tempoInserirDecorrido;
-
+	srand(time(NULL));
 	
 	for(int i = 0; i<repeat; i++){
 		printf("-- repetição: %d --\n", i+1);
@@ -174,6 +174,7 @@ int main(){
 		printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");
+		free(groot);
 	}
 	
 	printf("\n");

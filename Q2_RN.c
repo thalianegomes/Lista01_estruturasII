@@ -4,13 +4,13 @@
 #define tam 10000
 #define repeat 30
 
-typedef struct no NO;
+typedef struct no Arv;
 
 // 0 para vermelho, 1 para preto
 struct no{
     int info;
     int cor;
-    NO *esq,*dir;
+    Arv *esq,*dir;
 };
 
 typedef struct{
@@ -18,11 +18,11 @@ typedef struct{
 	int cont;
 }ContadorDiff;
 
-NO *criarArv(){
+Arv *criarArv(){
     return NULL;
 }
 
-int corNO(NO *no){
+int corNO(Arv *no){
     int c = 0;
     if(no==NULL){
         c = 1;
@@ -32,10 +32,10 @@ int corNO(NO *no){
     return c;
 }
 
-NO *rotacionaEsquerda(NO *no){
+Arv *rotacionaEsquerda(Arv *no){
     //printf("-- Gira p/ esquerda: %d\n", no->info);
-    NO *aux;
-    aux = (NO*)malloc(sizeof(NO));
+    Arv *aux;
+    aux = (Arv*)malloc(sizeof(Arv));
 
     aux = no->dir;
     no->dir = aux->esq;
@@ -47,10 +47,10 @@ NO *rotacionaEsquerda(NO *no){
 }
 
 
-NO *rotacionaDireita(NO *no){
+Arv *rotacionaDireita(Arv *no){
     //printf("-- Gira p/ direita: %d\n", no->info);
-    NO *aux;
-    aux = (NO*)malloc(sizeof(NO));
+    Arv *aux;
+    aux = (Arv*)malloc(sizeof(Arv));
     
     aux = no->esq;
     no->esq = aux->dir;
@@ -61,7 +61,7 @@ NO *rotacionaDireita(NO *no){
     return aux;
 }
 
-NO *trocaCor(NO *no){
+Arv *trocaCor(Arv *no){
     //printf("Troca a cor : %d\n",no->info);
     no->cor = 0;
     no->esq->cor = 1;
@@ -69,10 +69,10 @@ NO *trocaCor(NO *no){
     return no;
 }
 
-NO *criarNo(NO *raiz,int valor){
+Arv *criarNo(Arv *raiz,int valor){
     if(raiz == NULL){
-        NO *no;
-        no = (NO*)malloc(sizeof(NO));
+        Arv *no;
+        no = (Arv*)malloc(sizeof(Arv));
 
         no->info = valor;
         no->cor = 0;        //cria vermelho
@@ -99,7 +99,7 @@ NO *criarNo(NO *raiz,int valor){
     return raiz;
 }
 
-void inserir(NO **raiz, int valor){
+void inserir(Arv **raiz, int valor){
     //printf("[Inseriu o %d]\n",valor);
     *raiz = criarNo(*raiz,valor);
 
@@ -108,7 +108,7 @@ void inserir(NO **raiz, int valor){
   
 }
 
-int buscaRN (NO *raiz, int valor) {
+int buscaRN (Arv *raiz, int valor) {
     int busca = -1;
 
     if(raiz != NULL){
@@ -122,54 +122,47 @@ int buscaRN (NO *raiz, int valor) {
     return busca;
 }
 
-int numeroNosRN(NO *raiz){
+int numeroNosRN(Arv *raiz){
     int qtd = 0;
 	if(raiz != NULL )
         qtd = numeroNosRN(raiz->esq) + 1 + numeroNosRN(raiz->dir);
     return qtd;
 }
 
-void profundidade_menorRN(NO *raiz,NO *menor, int *nivel){
-    int numeroNoDir = numeroNosRN(raiz->dir);
-    int numeroNoEsq = numeroNosRN(raiz->esq);
-    if((raiz->dir != NULL) && (raiz->esq != NULL) ){
-        (*nivel)++;
-        if(numeroNoDir < numeroNoEsq){
-            menor =  raiz->dir;
-            profundidade_menorRN(raiz->dir, menor, nivel);
-        }else{
-            menor =  raiz->esq;
-            profundidade_menorRN(raiz->esq, menor, nivel);
-        }
-    }else{
-        if (raiz->dir == NULL && raiz->esq != NULL){
-            profundidade_menorRN(raiz->esq, menor, nivel);
-        }else{
-            if( raiz->dir != NULL && raiz->esq == NULL ){
-                profundidade_menorRN(raiz->dir, menor, nivel);
-            }else{
-                menor = raiz;
-            }
-        }
+
+int folha_MaiorP(Arv* raiz){
+    int maxD = 0, maxE = 0,depth = -1;
+
+    if(raiz != NULL){
+        maxE = folha_MaiorP(raiz->esq)+1;
+        maxD = folha_MaiorP(raiz->dir)+1;
+
+        if(maxD > maxE) 
+            depth = maxD;
+        else
+            depth = maxE;
     }
+    return depth;
 }
 
-void profundidade_maiorRN(NO *raiz,NO *maior, int *nivelMaior){
-    int numeroNoDir = numeroNosRN(raiz->dir);
-    int numeroNoEsq = numeroNosRN(raiz->esq);
-    if(!(raiz->dir == NULL && raiz->esq == NULL)){
-        (*nivelMaior)++;
-        if(numeroNoDir > numeroNoEsq){
-            maior =  raiz->dir;
-            profundidade_maiorRN(raiz->dir, maior, nivelMaior);
-        }else{
-            maior =  raiz->esq;
-            profundidade_maiorRN(raiz->esq, maior, nivelMaior);
-        }
+int folha_MenorP(Arv* raiz){
+    int maxD = 0, maxE = 0,depth = -1;
+
+    if(raiz != NULL){
+        maxE = folha_MaiorP(raiz->esq)+1;
+        maxD = folha_MaiorP(raiz->dir)+1;
+
+        if(maxD < maxE) 
+            depth = maxD;
+        else
+            depth = maxE;
     }
+    return depth;
 }
 
-void exibir(NO *raiz){
+
+
+void exibir(Arv *raiz){
     if (raiz){
         printf("(");
         exibir(raiz->esq);
@@ -196,10 +189,9 @@ int main(){
    
     ContadorDiff *Values = (ContadorDiff *)malloc(sizeof(ContadorDiff));
     int qtdDiff = 0;
-
+    srand(time(NULL));
     for(int i = 0; i<repeat; i++){
-        NO *arv =  criarArv();
-        NO *auxArv = criarArv();
+        Arv *groot =  criarArv();
 
         int menorNivel = 0, maiorNivel = 0;
         clock_t tempoBuscaI, tempoBuscaF;
@@ -214,15 +206,15 @@ int main(){
 		tempoInserirI = clock();
 		//Inserindo numeros aleatorios na arvore
 		for(int x = 0; x<tam; x++){
-			inserir(&arv, numbers[x]);
+			inserir(&groot, numbers[x]);
 		}
 		tempoInserirF = clock();
 
         tempoInserirDecorrido = ((tempoInserirF - tempoInserirI) * 1000) / CLOCKS_PER_SEC;
         printf("Tempo gasto INSERIR: %lf \n", tempoInserirDecorrido);
 
-        profundidade_menorRN(arv, auxArv, &menorNivel);
-        profundidade_maiorRN(arv, auxArv, &maiorNivel);
+        menorNivel = folha_MenorP(groot);
+        maiorNivel = folha_MaiorP(groot);
         printf("-- Menor nível: %d | Maior Nível: %d \n", menorNivel,maiorNivel);
 
 
@@ -245,14 +237,14 @@ int main(){
 
         //Contar tempo de BUSCA
 		tempoBuscaI = clock();
-		int find = buscaRN(arv,numbers[5]);
+		int find = buscaRN(groot,numbers[5]);
 		
 		tempoBuscaF = clock();
         tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI) * 1000) / CLOCKS_PER_SEC;
         printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");
-        
+        free(groot);
     }
 
     printf("\n");

@@ -236,6 +236,7 @@ int main(){
 		printf("Tempo gasto BUSCAR: %lf \n", tempoBuscaDecorrido);
 
 		printf("-------------\n");
+		free(groot);
 	}
 	
 	printf("\n");
