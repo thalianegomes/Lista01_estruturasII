@@ -141,7 +141,7 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 						maisEsq = paiMaisEsq;
 					}
 					//free(*paiMaisEsq);		
-					
+
 					if(qtdLocal == qtdBlocos){
 
 						//Buscando o mais a direita Ocupado.
@@ -164,11 +164,30 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 						(*raiz)->endFim = newFim;
 						(*raiz)->status = 'O';
 
+						if(paiMaisEsq == raiz){
+							printf("Entrou 1\n");
+							(*raiz)->dir = ((*maisEsq)->dir);
+							printf("saiu 1\n");
+						}else{
+							printf("Entrou 2\n");
+							(*paiMaisEsq)->esq = ((*maisEsq)->dir);
+							printf("saiu 2\n");
+						}
+
+						if(paiMaisDir == raiz){
+							printf("Entrou 3\n");
+							(*raiz)->esq = ((*maisDir)->esq);
+							printf("saiu 3\n");
+						}else {
+							printf("Entrou 4\n");
+							(*paiMaisDir)->dir = ((*maisDir)->esq);
+							printf("saiu 4\n");
+						}
 						
-						free(*maisDir);
-						free(*maisEsq);
-						*maisDir = NULL;
-						*maisEsq = NULL;	
+						//free(*maisDir);
+						//free(*maisEsq);
+						//*maisDir = NULL;
+						//*maisEsq = NULL;	
 						resul = 1;
 					}else if(qtdLocal > qtdBlocos){
 						int newFim = (*raiz)->endFim - qtdBlocos;
@@ -176,7 +195,7 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 						(*raiz)->endFim = newFim;
 						(*maisEsq)->endInicio = newInicio;
 						resul = 1;
-					
+						
 					}else{
 						resul = alocar(&(*raiz)->dir,raiz, qtdBlocos, status);
 					}	

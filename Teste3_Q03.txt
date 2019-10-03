@@ -1,11 +1,10 @@
-%UNIDADE2
+%UNIDADE3
 scheme:programa
 software:programa,aplicativo
 feature:caracteristica
 pimp:programa,cafetao
 beer:cerveja,cachaca,me
 hot:cadaver
-%UNIDADE1
 egg:ovo
 scheme:programa
 bag:saco,meusaco
