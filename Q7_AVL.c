@@ -175,23 +175,15 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 						(*raiz)->status = 'O';
 
 						if(paiMaisEsq == raiz){
-							printf("Entrou 1\n");
 							(*raiz)->dir = ((*maisEsq)->dir);
-							printf("saiu 1\n");
 						}else{
-							printf("Entrou 2\n");
 							(*paiMaisEsq)->esq = ((*maisEsq)->dir);
-							printf("saiu 2\n");
 						}
 
 						if(paiMaisDir == raiz){
-							printf("Entrou 3\n");
 							(*raiz)->esq = ((*maisDir)->esq);
-							printf("saiu 3\n");
 						}else {
-							printf("Entrou 4\n");
 							(*paiMaisDir)->dir = ((*maisDir)->esq);
-							printf("saiu 4\n");
 						}
 						
 						//free(*maisDir);
@@ -307,7 +299,17 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 							maisDir = paiMaisDir;
 						}
 						//free(*paiMaisDir);
-	
+						if(paiMaisEsq == raiz){
+							(*raiz)->dir = ((*maisEsq)->dir);
+						}else{
+							(*paiMaisEsq)->esq = ((*maisEsq)->dir);
+						}
+
+						if(paiMaisDir == raiz){
+							(*raiz)->esq = ((*maisDir)->esq);
+						}else {
+							(*paiMaisDir)->dir = ((*maisDir)->esq);
+						}
 						//Buscar os mais internos para unir;
 						int newInicio = (*maisDir)->endInicio;
 						int newFim = (*maisEsq)->endFim;
