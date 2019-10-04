@@ -105,12 +105,12 @@ puppy:cachorrinho,cachorro,filhote
 pup:filhote,filhotes
 whelp:filhotes
 cur:cachorro
-slut:cadela,vagabunda,vagabundo,
+slut:cadela,vagabunda,vagabundo
 woman:mulher,amante,solteirona,feminino
 wif:esposa
 female:fêmea,feminino,mulheril
 person:pessoa,homem,mulher,criança,tipo
-jade:mulher,criada,
+jade:mulher,criada
 bottle:garrafa,frasco,mamadeira,âmbula,feixe
 feeder:mamadeira,alimentador,afluente,carregador
 charger:carregador
@@ -176,7 +176,7 @@ look:olhar,visualizar
 most:mais,maior
 people:pesssoas,povo
 may:maio,pode
-why:
+why:que
 ask:pedir,perguntar
 men:homens
 change:mudar

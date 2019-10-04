@@ -32,18 +32,19 @@ typedef struct capitulo cap;
 
 int menu();
 void mostraLista(ing *lista);
+
 void insereLista(ing **palavra, char *p);
 arv *criaNo(char *port,char *ingl,arv *esq,arv *cen,arv *dir);
 arv *criaNoL(char *port,ing *ingl,arv *esq,arv *cen,arv *dir);
 arv *quebraNo(arv **raiz,char *info,ing *ingl,char *promovePal,ing **promoveL,arv *sub);
 arv *adcNO(arv *no,char *info,ing *lis,arv *filho);
 int efolha(arv *no);
-arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *pai);
+arv *inserir(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *pai);
 void mostraInOrdem(arv *raiz);
 void Mostrar(cap *uni);
 void lerArquivo(char *caminho, cap **uni);
 void *inserirCapitulo(cap **uni, char *nome);
-int remove23(arv **raiz, char *pal, arv **pai);
+int remover23(arv **raiz, char *pal, arv **pai);
 void apagarLista(ing **lista);
 void copiaLista(ing **lista, ing *lis);
 void menorInfoDir(arv *raiz, arv **no, arv **paiNo);
@@ -56,87 +57,131 @@ int main(){
     arv *no;
     cap *uni = NULL, **aux;
     aux=(cap**)malloc(sizeof(cap*));
-    int choice, certo;
-    char procura[100], arq[100], unidade[100];
-    clock_t inicio, fim;
-    long double tempo;
-    do{
-        choice = menu();
-        switch(choice){
-        case 0:
-            break;
-        case 1:
-            printf("Digite o nome do arquivo com a extensao:\n");
-            setbuf(stdin, NULL);
-            scanf("%s", arq);
-            inicio = (long double)clock();
-            lerArquivo(arq, &uni);
-            fim = (long double)clock();
-            tempo = ((fim - inicio)*1000)/CLOCKS_PER_SEC;
-            printf("Tempo de insercao %Lf\n", tempo);
-            break;
-        case 2:
-            printf("Digite o nome da unidade:\n");
-            scanf("%s", procura);
-            mostraUnidade(uni, procura);
-            break;
-        case 3:
-            Mostrar(uni);
-            break;
-        case 4:
-            certo = 0;
-            printf("Digite o nome da unidade:\n");
-            setbuf(stdin, NULL);
-            scanf("%s", unidade);
-            *aux = procuraUnidade(uni, unidade, &certo);
-            if(certo == 1){
-                printf("Digite o nome da palavra:\n");
-                setbuf(stdin, NULL);
-                scanf("%s", procura);
-                arv **pai=(arv**)malloc(sizeof(arv*));
-                *pai=NULL;
-                remove23(&(*aux)->arvore, procura, pai);
-            }else{
-                printf("Essa unidade nao existe.\n");
-            }
-            break;
-        case 5:
-            certo = 0;
-            printf("Digite o nome da unidade:\n");
-            setbuf(stdin, NULL);
-            scanf("%s", unidade);
-            inicio = (long double)clock();
-            *aux = procuraUnidade(uni, unidade, &certo);
-            fim = (long double)clock();
-            tempo = ((fim - inicio)*1000)/CLOCKS_PER_SEC;
-            printf("Tempo de BUSCA da UNIDADE %Lf\n", tempo);
-            if(certo == 1){
-                printf("Digite o nome da palavra:\n");
-                setbuf(stdin, NULL);
-                scanf("%s", procura);
-                inicio = (long double)clock();
-                if(procuraPalavra((*aux)->arvore, procura) == 1){
-                    printf("Palavra Encontrada!\n");
-                }else{
-                    printf("Palavra nao encontrada!\n");
-                }
-                fim = (long double)clock();
-                tempo = ((fim - inicio) * 1000) / CLOCKS_PER_SEC;
-                printf("Tempo de BUSCA da PALAVRA %Lf\n", tempo);
-             }
-            break;
-        default:
-            printf("Informacao invalida!\n");
-            break;
-        }
-    }while(choice != 0);
-}
+    int certo, op;
+    char palavraBuscar[100], NameArquivo[100],unidade[100];
+    
+    clock_t tempoBuscaI, tempoBuscaF;
+    clock_t tempoInserirI, tempoInserirF;
+    float tempoBuscaDecorrido, tempoInserirDecorrido;
 
-int menu(){
-    int choice;
-    printf("1-Ler Arquivo\n2-Mostrar Uma Unidade\n3-Mostrar Todas as Unidades\n4-Remover uma Palavra\n5-Buscar Palavra\n0-Sair\n");
-    scanf("%d", &choice);
-    return choice;
+    while(1 == 1){
+       
+        printf("\n------------------------------\n");
+        printf(" [1] - Importar Dados\n");          //Criar Unidades
+        printf(" [2] - Remover Palavra\n");     //Uma Unidade
+        printf(" [3] - Buscar Palavra PTBR\n");     //TODAS AS UNIDADES
+        printf(" [4] - Exibir Unidade\n");          // PT -> Eng
+        printf(" [0] - SAIR\n");
+        printf("------------------------------\n");
+        printf("Escolha uma Opção: ");
+        scanf("%d", &op);
+        switch(op){
+            case 1:
+                printf("Informe nome do arquivo (+ .txt): ");
+                setbuf(stdin, NULL);
+                scanf("%s", NameArquivo);
+                tempoInserirI = clock();
+                lerArquivo(NameArquivo, &uni);
+                tempoInserirF = clock();
+                tempoInserirDecorrido = ((tempoInserirF - tempoInserirI) * 1000) / CLOCKS_PER_SEC;
+                printf("Tempo gasto para INSERIR: %lf \n", tempoInserirDecorrido);
+                break;
+            
+            case 2:
+                
+                certo = 0;
+                printf("Informe a palavra em PTBR: ");
+                char palavraBuscar2[50];
+                scanf("%s", palavraBuscar2);
+
+                printf("LISTA DE UNIDADES:\n");
+                /*
+                for(int x = 0; x<qtdUnidades; x++){
+                    printf("[%d] - %s\n",x, livro[x].nome );
+                }*/
+                
+                printf("Escolha uma Unidade: ");
+                setbuf(stdin, NULL);
+                scanf("%s", unidade);
+
+                *aux = procuraUnidade(uni, unidade, &certo);
+                if( certo == 1 ){
+                    arv **pai=(arv**)malloc(sizeof(arv*));
+                    *pai=NULL;
+                    remover23(&(*aux)->arvore, palavraBuscar2, pai);
+                }else{
+                    printf("\n -- Unidade não Cadastrada --\n");
+                }
+                
+                break;
+            
+            case 3:
+                certo = 0;
+                printf("Informe a palavra em PTBR: ");
+                char palavraBuscar[50];
+                scanf("%s", palavraBuscar);
+
+                printf("Escolha uma Unidade: ");
+                setbuf(stdin, NULL);
+                scanf("%s", unidade);
+
+                tempoBuscaI = clock();
+                *aux = procuraUnidade(uni, unidade, &certo);
+                tempoBuscaF = clock();
+                tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI) * 1000) / CLOCKS_PER_SEC;
+                printf("Tempo gasto para BUSCAR UNIDADE: %lf \n", tempoBuscaDecorrido);
+                
+                if(certo == 1){
+                    tempoBuscaI = clock();
+                    printf("\nUnidade [%s]: \n",unidade );
+
+                    if(procuraPalavra((*aux)->arvore, palavraBuscar) == 1){
+                        printf("Palavra Encontrada!\n");
+                    }else{
+                        printf(" -- Palavra não encontrada --\n");
+                    }   
+
+                    tempoBuscaF = clock();
+                    tempoBuscaDecorrido = ((tempoBuscaF - tempoBuscaI) * 1000) / CLOCKS_PER_SEC;
+                    printf("Tempo gasto para BUSCAR PALAVRA: %lf \n", tempoBuscaDecorrido);
+                }
+                break;
+            
+            case 4:
+
+                //2-Mostrar Uma Unidade\n
+                printf("Escolha uma Unidade: ");
+                scanf("%s", palavraBuscar);
+                mostraUnidade(uni, palavraBuscar);
+                break;
+                /*
+                if(qtdUnidades == 0){
+                    printf("\n -- Nenhuma unidade cadastrada --\n");
+                }else{
+                    //printf("\nLISTA DE UNIDADES:\n");
+                    printf("------------------------------\n");
+                    for(int x = 0; x<qtdUnidades; x++)
+                        printf("[%d] - %s\n",x, livro[x].nome );
+                    printf("------------------------------\n");
+
+                    printf("Escolha uma Unidade: ");
+                    scanf("%d", &uni);
+                    if(uni >= 0 && uni<qtdUnidades){
+                        exibirABB(livro[uni].arv);
+                    }else{
+                        printf("\n -- Unidade não Cadastrada --\n");
+                    }
+                }
+                break;
+                */
+            case 0:
+                exit(0);
+                break;
+            default:
+                printf("\n -- Informe uma opção válida --\n");
+                break;
+        }
+    }
 }
 
 void Mostrar(cap *uni){
@@ -266,7 +311,7 @@ int efolha(arv *no){
     return r;
 }
 
-arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *pai){
+arv *inserir(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *pai){
     arv *aux = NULL;
     ing *aux2=NULL;
     if(*promoveL==NULL){
@@ -288,11 +333,11 @@ arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *p
         }
     }else{
         if(strcmp(info,(*raiz)->info1)<0){
-            aux=insere(&((*raiz)->esq),info,ingl,promove,promoveL,*raiz);
+            aux=inserir(&((*raiz)->esq),info,ingl,promove,promoveL,*raiz);
         }else if((*raiz)->qtd==1 || strcmp(info,(*raiz)->info2)<0){
-            aux=insere(&((*raiz)->cen),info,ingl,promove,promoveL,*raiz);
+            aux=inserir(&((*raiz)->cen),info,ingl,promove,promoveL,*raiz);
         }else{
-            aux=insere(&((*raiz)->dir),info,ingl,promove,promoveL,*raiz);
+            aux=inserir(&((*raiz)->dir),info,ingl,promove,promoveL,*raiz);
         }
     }
     if(aux!=NULL){
@@ -312,7 +357,7 @@ arv *insere(arv **raiz,char *info,char *ingl,char *promove,ing **promoveL,arv *p
     }
     return aux;
 }
-
+//AQUI
 void mostraInOrdem(arv *raiz){
     if(raiz!=NULL){
         mostraInOrdem(raiz->esq);
@@ -329,6 +374,7 @@ void mostraInOrdem(arv *raiz){
     }
 }
 
+//AQUI
 void mostraUnidade(cap *uni, char *p){
     cap *aux=uni;
     for(uni; aux != NULL; aux=aux->prox){
@@ -348,6 +394,7 @@ void *inserirCapitulo(cap **uni ,char *nome){
     *uni = new; 
 }
 
+//AQUI
 void lerArquivo(char *caminho, cap **uni){
     FILE *fptr;
     int i, j;
@@ -386,19 +433,20 @@ void lerArquivo(char *caminho, cap **uni){
                 j++;
                 if(palavras[i] == ','){
                     nome[j-1] = '\0';
-                    insere(&(*uni)->arvore, nome, ingles, promove, &proLista, NULL);
+                    inserir(&(*uni)->arvore, nome, ingles, promove, &proLista, NULL);
                     proLista = NULL;
                     j = 0;
                 }
             }
             nome[j] = '\0';
-            insere(&(*uni)->arvore, nome, ingles, promove, &proLista, NULL);
+            inserir(&(*uni)->arvore, nome, ingles, promove, &proLista, NULL);
             proLista = NULL;
         }
         fscanf(fptr, "%s", palavras);
     }
 }
 
+//AQUI
 void copiaLista(ing **lista, ing *lis){
     if(lis != NULL){
         insereLista(lista, lis->eng);
@@ -424,7 +472,8 @@ void maiorInfoEsq(arv *raiz, arv **no, arv **paiNo){
     }
 }
 
-int remove23(arv **raiz, char *pal, arv **pai){
+//AQUI
+int remover23(arv **raiz, char *pal, arv **pai){
     int removeu = 0;
     arv *no = NULL, *no1, *paiNo = NULL, *paiNo1 = NULL, **aux;
     aux=(arv**) malloc(sizeof(arv*));
@@ -593,7 +642,7 @@ int remove23(arv **raiz, char *pal, arv **pai){
             }
         }else{
             if(strcmp(pal, (*raiz)->info1)<0){
-                removeu = remove23(&(*raiz)->esq, pal, raiz);
+                removeu = remover23(&(*raiz)->esq, pal, raiz);
             }else if(strcmp(pal, (*raiz)->info1)==0){
                 paiNo = *raiz;
                 menorInfoDir((*raiz)->cen, &no, &paiNo);
@@ -602,22 +651,22 @@ int remove23(arv **raiz, char *pal, arv **pai){
                 copiaLista(&(*raiz)->l1, no->l1);
                 mostraInOrdem(*raiz);
                 printf("\n\n");
-                remove23(&(*raiz)->cen, (*raiz)->info1, raiz);
+                remover23(&(*raiz)->cen, (*raiz)->info1, raiz);
                 printf("\n\n");
                 mostraInOrdem(*raiz);
                 removeu = 1;
             }else if((*raiz)->qtd == 1 || strcmp(pal, (*raiz)->info2)<0){
-                removeu = remove23(&(*raiz)->cen, pal, raiz);
+                removeu = remover23(&(*raiz)->cen, pal, raiz);
             }else if(pal == (*raiz)->info2){
                 paiNo = *pai;
                 menorInfoDir((*pai)->dir, &no, &paiNo);
                 strcpy((*raiz)->info2,no->info1);
                 apagarLista(&(*raiz)->l2);
                 copiaLista(&(*raiz)->l2, no->l1);
-                remove23(&(*raiz)->dir, (*raiz)->info2, raiz);
+                remover23(&(*raiz)->dir, (*raiz)->info2, raiz);
                 removeu = 1;
             }else{
-                removeu = remove23(&(*raiz)->dir, pal, raiz);
+                removeu = remover23(&(*raiz)->dir, pal, raiz);
             }
         }
     }

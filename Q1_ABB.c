@@ -92,6 +92,7 @@ int folha_MaiorP(Arv* raiz){
 	}
 	return depth;
 }
+
 int folha_MenorP(Arv* raiz){
 	int maxD = 0, maxE = 0,depth = -1;
 
@@ -106,7 +107,6 @@ int folha_MenorP(Arv* raiz){
 	}
 	return depth;
 }
-
 
 int* gerarNumRandom(int qtd){
 	int* vetor = (int*) malloc(qtd*sizeof(int));
@@ -182,5 +182,4 @@ int main(){
 		printf("Numero Diff: %d | %d vez(es)\n", Values[y].num, Values[y].cont);
 	}
 	return 0;
-	
 }
