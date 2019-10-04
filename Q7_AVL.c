@@ -132,7 +132,12 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 			
 					//Buscando o mais a esquerda Ocupado.
 					NO** paiMaisEsq = raiz;
-					NO** maisEsq = &((*raiz)->dir);
+					NO** maisEsq;
+					if((*raiz)->dir == NULL){
+						maisEsq = raiz;
+					}else{
+						maisEsq = &((*raiz)->dir);
+					}
 					while((*maisEsq)->esq != NULL){
 						paiMaisEsq = maisEsq;
 						maisEsq = &((*maisEsq)->esq) ;
@@ -146,7 +151,12 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 
 						//Buscando o mais a direita Ocupado.
 						NO** paiMaisDir = raiz;
-						NO** maisDir = &((*raiz)->esq);
+						NO** maisDir;;
+						if((*raiz)->esq == NULL ){
+							maisDir = raiz;
+						}else{
+							maisDir = &((*raiz)->esq);	
+						}
 						while((*maisDir)->dir != NULL){
 							paiMaisDir = maisDir;
 							maisDir = &((*maisDir)->dir) ;
@@ -262,7 +272,12 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 			
 					//Buscando o mais a esquerda Ocupado.
 					NO** paiMaisEsq = raiz;
-					NO** maisEsq = &((*raiz)->dir);
+					NO** maisEsq;
+					if((*raiz)->dir == NULL){
+						maisEsq = raiz;
+					}else{
+						maisEsq = &((*raiz)->dir);
+					}
 					while((*maisEsq)->esq != NULL){
 						paiMaisEsq = maisEsq;
 						maisEsq = &((*maisEsq)->esq) ;
@@ -276,7 +291,14 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 
 						//Buscando o mais a direita Ocupado.
 						NO** paiMaisDir = raiz;
-						NO** maisDir = &((*raiz)->esq);
+						NO** maisDir;
+						if((*raiz)->esq == NULL ){
+							maisDir = raiz;
+						}else{
+							maisDir = &((*raiz)->esq);	
+						}
+
+
 						while((*maisDir)->dir != NULL){
 							paiMaisDir = maisDir;
 							maisDir = &((*maisDir)->dir) ;
