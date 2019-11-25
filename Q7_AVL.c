@@ -161,7 +161,7 @@ int alocar(NO** raiz, NO** pai, int qtdBlocos, int *status){
 							paiMaisDir = maisDir;
 							maisDir = &((*maisDir)->dir) ;
 						}
-						if((*paiMaisDir)->status == 'O'){
+						if((*paiMaisDir)->status == 'L'){
 							maisDir = paiMaisDir;
 						}
 						//free(*paiMaisDir);
@@ -295,10 +295,19 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 							paiMaisDir = maisDir;
 							maisDir = &((*maisDir)->dir) ;
 						}
-						if((*paiMaisDir)->status == 'L'){
+						if((*paiMaisDir)->status == 'O'){
 							maisDir = paiMaisDir;
 						}
-						//free(*paiMaisDir);
+						
+
+						int newInicio = (*maisDir)->endInicio;
+						int newFim = (*maisEsq)->endFim;
+						(*raiz)->endInicio = newInicio;
+						(*raiz)->endFim = newFim;
+						(*raiz)->status = 'L';
+						
+						printf("ERRO[%d][%d]\n",newInicio, newFim );
+
 						if(paiMaisEsq == raiz){
 							(*raiz)->dir = ((*maisEsq)->dir);
 						}else{
@@ -310,18 +319,12 @@ int liberar(NO** raiz, NO** pai, int qtdBlocos, int* status){
 						}else {
 							(*paiMaisDir)->dir = ((*maisDir)->esq);
 						}
-						//Buscar os mais internos para unir;
-						int newInicio = (*maisDir)->endInicio;
-						int newFim = (*maisEsq)->endFim;
-						(*raiz)->endInicio = newInicio;
-						(*raiz)->endFim = newFim;
-						(*raiz)->status = 'L';
 
 						
-						free(*maisDir);
-						free(*maisEsq);
-						*maisDir = NULL;
-						*maisEsq = NULL;	
+						//free(*maisDir);
+						//free(*maisEsq);
+						//*maisDir = NULL;
+						//*maisEsq = NULL;	
 						resul = 1;
 					}else if(qtdLocal > qtdBlocos){
 						int newFim = (*raiz)->endFim - qtdBlocos;
