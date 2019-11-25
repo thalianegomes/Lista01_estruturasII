@@ -526,7 +526,6 @@ int remover23(arv **raiz, char *pal, arv **pai){
                             apagarLista(&no->l1);
                             free(no);
                             *pai = *raiz;
-                            printf("aq\n");
                         }else{
                             strcpy(no->info1,paiNo->info2);
                             apagarLista(&no->l1);
